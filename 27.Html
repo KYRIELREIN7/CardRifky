@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyrielrein</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+            padding: 0 20px; /* Increase padding for more noticeable spacing on mobile */
+        }
+
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #000;
+        }
+
+        .card {
+            background-color: #2a2a40;
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        body.light-mode .card {
+            background-color: #fff;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dark-mode-toggle {
+            background-color: #3a3a52;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode .dark-mode-toggle {
+            background-color: #ddd;
+            color: #000;
+        }
+
+        .profile-pic-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #4a4a6a;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .profile-ring {
+            width: 120px;
+            height: 120px;
+            border: 3px solid transparent;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: spin 3s linear infinite;
+            transition: border-top-color 0.3s;
+        }
+
+        body.light-mode .profile-ring {
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .description {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #bbb;
+            transition: color 0.3s;
+        }
+
+        body.light-mode .description {
+            color: #666;
+        }
+
+        .divider {
+            margin: 20px 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(135deg, #4a4a6a 25%, transparent 25%) repeat-x;
+            background-size: 20px 20px;
+        }
+
+        body.light-mode .divider {
+            background: linear-gradient(135deg, #ddd 25%, transparent 25%) repeat-x;
+            background-size: 20px 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            background-color: #4a4a6a;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.1s, transform 0.1s;
+        }
+
+        .icon-button:active {
+            transform: scale(0.9);
+        }
+
+        body.light-mode .icon-button {
+            background-color: #ddd;
+        }
+
+        .icon-button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer {
+            font-size: 12px;
+            margin-top: 20px;
+            color: #888;
+            transition: color 0.3s;
+        }
+
+        body.light-mode .footer {
+            color: #aaa;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 20px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .loading-overlay img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .name {
+                font-size: 20px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+
+            .icon-button {
+                width: 35px;
+                height: 35px;
+            }
+
+            .icon-button img {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <img src="c.png" alt="Ceh" style="width: 30px; height: 25px;">
+            </span>
+            <button class="dark-mode-toggle">🌙</button>
+        </div>
+        
+        <div class="profile-pic-wrapper">
+            <div class="profile-ring"></div>
+            <img src="Riel.jpg" alt="Profile Picture" class="profile-pic">
+        </div>
+
+        <div class="name">Rifky Anugrah</div>
+        <div class="description">Hello! I am Rifky Anugrah, a neet, not actually a software engineer, and I am a blue names enthusiast. Welcome to my web page!</div>
+
+        <div class="divider"></div>
+
+        <div class="buttons">
+            <button class="icon-button" data-category="G1" data-link="https://wa.me/6285175391804">
+                <img src="WA.png" alt="G1">
+            </button>
+            <button class="icon-button" data-category="G2" data-link="https://ngl.link/rielqwerty">
+                <img src="q.png" alt="G2">
+            </button>
+            <button class="icon-button" data-category="G3" data-link="mailto:muhammadrifkyanugrahpratama@gmail.com">
+                <img src="M.png" alt="G3">
+            </button>
+            <button class="icon-button" data-category="G4" data-link="https://www.instagram.com/__rielqwerty/">
+                <img src="IG.png" alt="G4">
+            </button>
+        </div>
+
+        <div class="footer">BlueNames | Website by Kyrielrein</div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <img src="LOAD.png" alt="Loading">
+        <span class="loading-text">Please wait...</span>
+    </div>
+
+    <script>
+        document.querySelectorAll('.icon-button').forEach(button => {
+            button.addEventListener('click', event => {
+                event.preventDefault(); // Prevent immediate navigation
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.style.display = 'flex';
+
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    window.location.href = button.dataset.link; // Navigate to the link
+                }, 800); // Simulate loading time
+            });
+        });
+
+        const toggleButton = document.querySelector('.dark-mode-toggle');
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            toggleButton.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>
