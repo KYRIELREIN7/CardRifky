@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miku UI - Final Version</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: rgba(96, 125, 139, 0.8);
+            --accent: #8B3A3A;
+            --accent-light: #ff5252;
+            --accent-glow: rgba(139, 58, 58, 0.6);
+            --glass-bg: rgba(20, 20, 20, 0.65); 
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-muted: #d0d0d0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            /* Background halaman diganti jadi abu-abu solid sesuai request */
+            background: #333333; 
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- BACKGROUND ANIMATION (Glitch Shapes) --- */
+        .ambient-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.4), rgba(0, 255, 255, 0.4));
+            backdrop-filter: blur(2px);
+            animation: float-glitch 8s infinite ease-in-out;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .shape.tri-1 {
+            top: 10%; left: 5%;
+            width: 120px; height: 120px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation-duration: 12s;
+        }
+
+        .shape.tri-2 {
+            bottom: 15%; right: 10%;
+            width: 180px; height: 180px;
+            background: linear-gradient(45deg, rgba(255, 0, 128, 0.3), rgba(100, 100, 255, 0.3));
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            transform: rotate(45deg);
+            animation-duration: 15s;
+        }
+
+        .shape.tri-3 {
+            top: 40%; right: 25%;
+            width: 70px; height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            transform: rotate(180deg);
+            animation-duration: 9s;
+        }
+
+        .shape.orb {
+            top: 60%; left: 15%;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            filter: blur(10px);
+            animation: float-orb 10s infinite ease-in-out;
+        }
+
+        @keyframes float-glitch {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(10deg) scale(1.05); opacity: 0.9; }
+            52% { transform: translateY(-22px) rotate(8deg) scale(1.05); opacity: 0.5; } 
+            54% { transform: translateY(-20px) rotate(10deg) scale(1.05); opacity: 0.9; }
+            100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
+        }
+
+        @keyframes float-orb {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            /* Z-index diturunkan agar berada DI BAWAH gambar banner yg pop-out */
+            z-index: 90; 
+            border-bottom: 1px solid var(--glass-border);
+            height: 80px; 
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+
+        .profile-mini {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #1a1a1a;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        .profile-mini:hover { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .logo-btn {
+            width: 42px; height: 42px;
+            background: #0077b5;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 119, 181, 0.4);
+        }
+        .logo-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(0, 119, 181, 0.6); }
+
+        .nav-links { display: flex; gap: 30px; position: relative; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1rem; 
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { 
+            color: white; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.7);
+        }
+
+        .nav-indicator {
+            position: absolute; bottom: -10px; height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .header-right { display: flex; gap: 15px; align-items: center; }
+        
+        .social-icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .social-icon-btn:hover { transform: translateY(-3px); background: white; }
+        .fa-instagram { color: white; } 
+        .social-icon-btn:hover .fa-instagram { color: #E1306C; }
+        .fa-twitter { color: white; }
+        .social-icon-btn:hover .fa-twitter { color: #1DA1F2; }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            /* Padding atas ditambah karena pop-out image */
+            padding: 140px 20px 50px;
+        }
+
+        /* --- HERO BANNER --- */
+        .hero-banner {
+            /* Background vir.png dipasang di sini */
+            background: url('vir.png') no-repeat center center;
+            background-size: cover;
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px 70px;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            /* Overflow visible agar kepala bisa keluar */
+            overflow: visible; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            margin-bottom: 50px;
+        }
+
+        /* Overlay gelap di atas vir.png agar teks terbaca */
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            z-index: 1;
+        }
+
+        .hero-content { width: 60%; z-index: 2; position: relative; }
+        
+        .hero-jp-text {
+            font-size: 1rem; letter-spacing: 4px;
+            color: rgba(255,255,255,0.8); margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        
+        .hero-content h1 {
+            font-size: 4.5rem;
+            line-height: 1.1; margin-bottom: 20px; color: white;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        }
+        
+        .hero-content p {
+            color: #ececec; line-height: 1.6;
+            margin-bottom: 35px; max-width: 450px; font-size: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-link {
+            color: white; font-weight: 600; text-decoration: none;
+            border-bottom: 3px solid var(--accent); padding-bottom: 4px;
+            transition: 0.3s;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .hero-link:hover { color: var(--accent-light); border-color: var(--accent-light); text-shadow: 0 0 15px var(--accent); }
+
+        .hero-image-container {
+            position: absolute;
+            right: 0px; 
+            bottom: -30px; 
+            width: 450px; 
+            height: 135%; 
+            pointer-events: none;
+            /* Z-index ditingkatkan agar lebih tinggi dari header dan lebih menonjol/pop-out */
+            z-index: 110; 
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6));
+            display: flex;
+            align-items: flex-end; 
+        }
+
+        .hero-image {
+            width: 100%; height: 100%;
+            background-image: url('banner.png'); 
+            background-size: contain; background-repeat: no-repeat;
+            background-position: bottom center;
+        }
+
+        /* --- DASHBOARD GRID (3 COLUMNS) --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr 1fr;
+            gap: 30px; 
+            align-items: start;
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+            padding: 0 5px;
+        }
+        .section-header h3 { 
+            font-size: 1.3rem; color: white; font-weight: 600; 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .section-header i { font-size: 1rem; color: var(--text-muted); }
+
+        /* --- CARDS & LISTS --- */
+        
+        /* Col 1: Artwork & Chibi */
+        .artwork-wrapper {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin-bottom: 15px;
+        }
+        .art-card {
+            height: 140px; 
+            border-radius: 18px;
+            background-color: #2a2a2a;
+            background-size: cover; background-position: center;
+            position: relative;
+            cursor: pointer; overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .art-card:hover { 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 10px 25px rgba(139, 58, 58, 0.4);
+            border-color: var(--accent);
+        }
+        
+        .art-info {
+            position: absolute; bottom: 8px; left: 8px; 
+            font-size: 0.8rem; color: white; font-weight: 600;
+            background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .art-1 { background-image: url('larimele.jpg'); }
+        .art-2 { background-image: url('ekstraku.jpg'); }
+        
+        .hidden-artworks { display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .hidden-artworks.show { display: grid; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-view-more {
+            width: 100%; padding: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white; border-radius: 16px; font-weight: 600;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        .btn-view-more:hover { 
+            background: rgba(255,255,255,0.15); 
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .btn-view-more i { transition: transform 0.3s; }
+        .btn-view-more.expanded i { transform: rotate(180deg); }
+
+        .chibi-wrapper {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin-top: 25px;
+        }
+        .chibi-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .chibi-card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px var(--accent-glow);
+        }
+        
+        .chibi-img {
+            width: 70px; height: 70px; 
+            border-radius: 50%; margin: 0 auto 12px;
+            animation: bounce 2s infinite ease-in-out;
+            background-size: cover; background-position: center;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .chibi-1 .chibi-img { background-image: url('chibi1.png'); }
+        .chibi-2 .chibi-img { background-image: url('chibi2.png'); }
+        .chibi-name { font-size: 0.85rem; font-weight: 600; color: white; }
+        
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        /* Col 2: Search & Message */
+        .search-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .search-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            padding: 18px 25px; 
+            border-radius: 40px;
+            color: white; text-decoration: none;
+            font-size: 1rem; font-weight: 500;
+            display: flex; align-items: center; gap: 15px;
+            transition: all 0.3s;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .search-item::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
+            background: var(--accent); transform: scaleY(0); transition: transform 0.3s;
+        }
+
+        .search-item:hover { 
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        .search-item:hover::before { transform: scaleY(1); }
+        
+        .search-item.highlight {
+            background: linear-gradient(90deg, rgba(139, 58, 58, 0.4), rgba(139, 58, 58, 0.1));
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .search-item i { font-size: 1.1rem; opacity: 0.9; width: 25px; text-align: center; }
+
+        .message-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transition: transform 0.3s;
+        }
+        .message-container:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+
+        .message-icon {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--accent), #e57373);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; font-size: 1.5rem; color: white;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .message-container h2 { font-size: 1.5rem; margin-bottom: 10px; color: white; }
+        .message-container p { color: #ccc; margin-bottom: 25px; font-size: 0.95rem; }
+
+        .message-btn {
+            display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+            background: var(--accent); color: white;
+            padding: 14px 40px; border-radius: 30px;
+            text-decoration: none; font-weight: 600; font-size: 1rem;
+            transition: all 0.3s ease; border: none; cursor: pointer;
+            width: 90%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+        .message-btn:hover { 
+            background: var(--accent-light); 
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        /* Col 3: Info */
+        .info-list { display: flex; flex-direction: column; gap: 15px; }
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 22px 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            display: flex; gap: 20px; align-items: flex-start;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .info-card:hover { 
+            transform: translateX(8px); 
+            border-color: var(--accent);
+            background: rgba(40, 40, 40, 0.85);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        .info-card:nth-child(1) .info-number { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
+        .info-card:nth-child(2) .info-icon { color: #00BFFF; filter: drop-shadow(0 0 5px #00BFFF); }
+        .info-card:nth-child(3) .info-icon { color: #FF69B4; filter: drop-shadow(0 0 5px #FF69B4); }
+
+        .info-icon { font-size: 1.6rem; opacity: 1; margin-top: 2px; width: 30px; text-align: center; }
+        .info-number { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+        .info-content h4 { font-size: 1.15rem; color: white; margin-bottom: 5px; }
+        .info-content p { font-size: 0.9rem; color: #cfcfcf; line-height: 1.4; }
+
+        .scroll-zoom {
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        .scroll-zoom.visible { opacity: 1; transform: translateY(0); }
+
+        /* Media Query untuk Responsif (Desktop ke Tablet) */
+        @media (max-width: 900px) {
+            .container { padding-top: 100px; padding-left: 15px; padding-right: 15px; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero-banner { 
+                flex-direction: column; align-items: flex-start; 
+                padding: 30px; min-height: auto; 
+            }
+            .hero-content { width: 100%; margin-bottom: 250px; }
+            .hero-content h1 { font-size: 3rem; }
+            .hero-image-container { 
+                width: 250px; height: 300px; 
+                right: 0; bottom: -20px; 
+                opacity: 1;
+            }
+            header { padding: 10px 20px; height: 70px; }
+            .nav-links { display: none; }
+            .header-left, .header-right { gap: 10px; }
+            .profile-mini, .logo-btn { width: 38px; height: 38px; }
+            .social-icon-btn { width: 38px; height: 38px; font-size: 1.1rem; }
+            .artwork-wrapper, .chibi-wrapper { gap: 10px; }
+            .art-card { height: 120px; }
+            .search-item { padding: 14px 20px; font-size: 0.9rem; }
+            .message-container { padding: 30px; }
+            .message-btn { padding: 12px 30px; font-size: 0.9rem; width: 100%; }
+            .info-card { padding: 18px 20px; }
+            .info-number { font-size: 1.8rem; }
+            .info-icon { font-size: 1.4rem; }
+            .info-content h4 { font-size: 1rem; }
+            .info-content p { font-size: 0.85rem; }
+        }
+
+        /* Media Query Tambahan untuk Smartphone (max-width: 600px) */
+        @media (max-width: 600px) {
+            .container { padding-top: 90px; padding-left: 10px; padding-right: 10px; }
+            .hero-banner { padding: 20px; border-radius: 20px; margin-bottom: 40px; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { font-size: 0.9rem; max-width: 100%; }
+            .hero-link { font-size: 1rem; }
+            .hero-image-container { width: 200px; height: 250px; right: -20px; bottom: -10px; }
+            header { padding: 8px 15px; height: 60px; }
+            .profile-mini, .logo-btn { width: 35px; height: 35px; font-size: 1.1rem; }
+            .social-icon-btn { width: 35px; height: 35px; font-size: 1rem; }
+            .dashboard-grid { gap: 30px; }
+            .section-header h3 { font-size: 1.1rem; }
+            .art-card { height: 100px; border-radius: 14px; }
+            .art-info { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; }
+            .btn-view-more { padding: 10px; font-size: 0.9rem; border-radius: 14px; }
+            .chibi-img { width: 60px; height: 60px; }
+            .chibi-name { font-size: 0.75rem; }
+            .search-list { gap: 10px; }
+            .search-item { padding: 12px 18px; font-size: 0.85rem; border-radius: 30px; }
+            .search-item i { font-size: 1rem; }
+            .message-container { padding: 25px; border-radius: 20px; margin-top: 30px; }
+            .message-icon { width: 50px; height: 50px; font-size: 1.3rem; }
+            .message-container h2 { font-size: 1.3rem; }
+            .message-container p { font-size: 0.85rem; }
+            .message-btn { padding: 10px 25px; font-size: 0.85rem; border-radius: 25px; }
+            .info-list { gap: 12px; }
+            .info-card { padding: 16px 18px; border-radius: 16px; gap: 15px; }
+            .info-number { font-size: 1.8rem; }
+            .info-icon { font-size: 1.3rem; }
+            .info-content h4 { font-size: 1rem; }
+            .info-content p { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-shapes">
+        <div class="shape tri-1"></div>
+        <div class="shape tri-2"></div>
+        <div class="shape tri-3"></div>
+        <div class="shape orb"></div>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <img src="profile.png" alt="Profile" class="profile-mini">
+            <button class="logo-btn"><i class="fab fa-linkedin-in"></i></button>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#home" class="active" data-section="home">Home</a>
+            <a href="#search" data-section="search">Search</a>
+            <a href="#message" data-section="message">Message</a>
+            <div class="nav-indicator"></div>
+        </nav>
+
+        <div class="header-right">
+            <button class="social-icon-btn"><i class="fab fa-instagram"></i></button>
+            <button class="social-icon-btn"><i class="fab fa-twitter"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section id="home">
+            <div class="hero-banner scroll-zoom">
+                <div class="hero-content">
+                    <div class="hero-jp-text">クエリフキー</div>
+                    <h1>qwerifky</h1>
+                    <p>qwerifky is Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati, voluptate?</p>
+                    <a href="#search" class="hero-link">Read More</a>
+                </div>
+                
+                <div class="hero-image-container">
+                    <div class="hero-image" id="heroMiku"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="search">
+            <div class="dashboard-grid">
+                
+                <div class="col-artwork scroll-zoom" style="transition-delay: 0.1s;">
+                    <div class="section-header">
+                        <h3>Project Collection</h3>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    
+                    <div class="artwork-wrapper">
+                        <div class="art-card art-1" onclick="changeBanner('larimele.jpg', 'Larimele')">
+                            <div class="art-info">Larimele</div>
+                        </div>
+                        <div class="art-card art-2" onclick="changeBanner('ekstraku.jpg', 'Ekstraku')">
+                            <div class="art-info">Ekstraku</div>
+                        </div>
+                    </div>
+
+                    <div class="hidden-artworks" id="hiddenArtworks">
+                        <div class="art-card art-1" onclick="changeBanner('larimele.jpg', 'Project A')">
+                            <div class="art-info">Project A</div>
+                        </div>
+                        <div class="art-card art-2" onclick="changeBanner('ekstraku.jpg', 'Project B')">
+                            <div class="art-info">Project B</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-view-more" id="viewMoreBtn" onclick="toggleArtwork()">
+                        <span>View More</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+
+                    <div class="section-header" style="margin-top: 40px;">
+                        <h3>Chibi Collection</h3>
+                    </div>
+                    <div class="chibi-wrapper">
+                        <div class="chibi-card chibi-1" onclick="changeBanner('chibi1.png', 'Chibi Miku')">
+                            <div class="chibi-img"></div>
+                            <div class="chibi-name">Chibi 1</div>
+                        </div>
+                        <div class="chibi-card chibi-2" onclick="changeBanner('chibi2.png', 'Chibi Miku')">
+                            <div class="chibi-img" style="animation-delay: 0.5s;"></div>
+                            <div class="chibi-name">Chibi 2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-search scroll-zoom" style="transition-delay: 0.2s;">
+                    <div class="section-header">
+                        <h3>Recent Search</h3>
+                    </div>
+                    <div class="search-list">
+                        <a href="#artwork" class="search-item" onclick="scrollToSection('artwork')">
+                            <i class="fas fa-search"></i> Artwork
+                        </a>
+                        <a href="#home" class="search-item highlight" onclick="scrollToSection('home')">
+                            <i class="fas fa-search"></i> Profile
+                        </a>
+                        <a href="#info" class="search-item" onclick="scrollToSection('info')">
+                            <i class="fas fa-search"></i> Info
+                        </a>
+                        <a href="#message" class="search-item" onclick="scrollToSection('message')">
+                            <i class="fas fa-search"></i> Msg
+                        </a>
+                    </div>
+
+                    <div id="message" class="message-container">
+                        <div class="message-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h2>Get in Touch</h2>
+                        <p>Have questions? Send me a message.</p>
+                        <a href="mailto:rielqwerty7@gmail.com" class="message-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Send Message</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-info scroll-zoom" style="transition-delay: 0.3s;">
+                    <div class="section-header">
+                        <h3>Info</h3>
+                    </div>
+                    <div class="info-list">
+                        <div class="info-card">
+                            <div class="info-number">01</div>
+                            <div class="info-content">
+                                <h4>Mewing</h4>
+                                <p>Lorem ipsum dolor sit amet consectetur.</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon"><i class="fas fa-globe"></i></div>
+                            <div class="info-content">
+                                <h4>Turu</h4>
+                                <p>Lorem ipsum dolor sit amet.</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon"><i class="fas fa-music"></i></div>
+                            <div class="info-content">
+                                <h4>Nigger</h4>
+                                <p>Lorem ipsum dolor sit amet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const navIndicator = document.querySelector('.nav-indicator');
+        const sections = document.querySelectorAll('section');
+
+        function updateNavIndicator(activeLink) {
+            if (!activeLink || !navIndicator) return;
+            const linkRect = activeLink.getBoundingClientRect();
+            const navRect = activeLink.parentElement.getBoundingClientRect();
+            
+            navIndicator.style.width = `${linkRect.width}px`;
+            navIndicator.style.left = `${linkRect.left - navRect.left}px`;
+        }
+
+        function updateActiveNav() {
+            let current = 'home';
+            const scrollPos = window.scrollY + 200;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === current) {
+                    link.classList.add('active');
+                    updateNavIndicator(link);
+                }
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    const headerOffset = 100;
+                    const elementPosition = targetSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                updateNavIndicator(this);
+            });
+        });
+
+        function changeBanner(imageSrc, title) {
+            const heroImage = document.getElementById('heroMiku');
+            const heroTitle = document.querySelector('.hero-content h1');
+            const banner = document.querySelector('.hero-banner');
+            
+            heroImage.style.opacity = '0';
+            heroImage.style.transform = 'translateY(20px) scale(0.95)';
+            
+            setTimeout(() => {
+                heroImage.style.backgroundImage = `url('${imageSrc}')`;
+                heroTitle.textContent = title;
+                heroImage.style.opacity = '1';
+                heroImage.style.transform = 'translateY(0) scale(1)';
+            }, 300);
+        }
+
+        function toggleArtwork() {
+            const hiddenArtworks = document.getElementById('hiddenArtworks');
+            const viewMoreBtn = document.getElementById('viewMoreBtn');
+            const btnText = viewMoreBtn.querySelector('span');
+            
+            hiddenArtworks.classList.toggle('show');
+            viewMoreBtn.classList.toggle('expanded');
+            
+            if (hiddenArtworks.classList.contains('show')) {
+                btnText.textContent = 'View Less';
+            } else {
+                btnText.textContent = 'View More';
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const headerOffset = 100;
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-zoom').forEach(el => observer.observe(el));
+
+        window.addEventListener('scroll', () => {
+            updateActiveNav();
+        });
+
+        window.addEventListener('load', () => {
+            const activeLink = document.querySelector('.nav-links a.active');
+            updateNavIndicator(activeLink);
+            updateActiveNav();
+        });
+
+        window.addEventListener('resize', () => {
+            const activeLink = document.querySelector('.nav-links a.active');
+            updateNavIndicator(activeLink);
+        });
+    </script>
+</body>
+</html>
